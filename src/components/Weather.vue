@@ -55,7 +55,7 @@
                 <div class="d-flex flex-column justify-content-center predictionContainer">
                     <WeatherNextPrediction />
                     <WeatherTodayPrediction />
-                    <div class="createdBy">created by <a href="#">hasanaimroatun</a> - devChallenges.io</div>
+                    <div class="createdBy">created by <a href="https://github.com/hasanaimroatun/wpu-weatherAppChallenge">hasanaimroatun</a> - devChallenges.io</div>
                 </div>
             </div>
         </div>
