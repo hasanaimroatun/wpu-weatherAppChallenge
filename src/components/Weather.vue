@@ -65,12 +65,34 @@
 <script>
 import WeatherNextPrediction from './PredictionNextWeather.vue'
 import WeatherTodayPrediction from './PredictionTodaysWeather.vue'
+import axios from 'axios'
 
     export default {
         name: 'weather-container',
         components: {
             WeatherNextPrediction,
             WeatherTodayPrediction,
+        },
+        data() {
+            return {
+                today: [],
+                nextDay: [],
+                unit: [],
+                errorMsg: ''
+            }
+        },
+        mounted() {
+            axios
+            .get('https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&current_weather=true&hourly=temperature_2m,relativehumidity_2m,surface_pressure,precipitation,visibility,windspeed_10m&daily=weathercode,precipitation_sum,et0_fao_evapotranspiration&windspeed_unit=mph&timezone=auto')
+            .then((res) => {
+                console.log(res.data)
+                this.today = res.data
+                console.log(this.today)
+            })
+            .catch(err => {
+                console.log(err.message)
+                this.errorMsg = err.message
+            })
         }
     }
 </script>
