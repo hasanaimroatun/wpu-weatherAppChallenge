@@ -4,9 +4,9 @@
             <div class="col-md-4 sBar position-relative">
                 <div class="bgImage" />
 
-                <div class="navigationContainer position-absolute" :style="{width: '90%'}">
+                <div class="navigationContainer position-absolute" :style="{width: '95%'}">
                     <nav class="navbar bg-transparent">
-                        <div class="container-fluid d-flex">
+                        <div class="container-fluid d-flex flex-nowrap gap-4">
                             <button class="navbar-toggler navBtn" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
                                 Search for Places
                             </button>
@@ -150,7 +150,7 @@ import axios from 'axios'
     color: #E7E7EB;
 }
 
-.iLocation:hover {
+.fa-location-crosshairs:hover {
     color: #6E707A;
 }
 
