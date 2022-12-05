@@ -29,9 +29,14 @@
         emits: ['changeToFah', 'changeToCel'],
         mounted() {
             const nextDayIcon = document.getElementsByClassName('wIcons')
-            for(let i = 0; i < nextDayIcon.length; i++) {
-                this.conditions(this.wCode[i], nextDayIcon[i])
-            }
+            // for(let i = 0; i < nextDayIcon.length; i++) {
+            //     this.conditions(this.wCode[i], nextDayIcon[i])
+            // }
+            this.conditions(this.wCode[0], nextDayIcon[0])
+            this.conditions(this.wCode[1], nextDayIcon[1])
+            this.conditions(this.wCode[2], nextDayIcon[2])
+            this.conditions(this.wCode[3], nextDayIcon[3])
+            this.conditions(this.wCode[4], nextDayIcon[4])
         },
         methods: {
             conditions(code, elem) {
