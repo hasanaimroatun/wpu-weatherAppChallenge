@@ -9,7 +9,7 @@
             <div v-for="(card, index) in ['card1', 'card2', 'card3', 'card4', 'card5']" :key="card">
                 <div class="predictions">
                     <div class="date">{{date[index]}}</div>
-                    <div class="icon">{{wCode[index]}}</div>
+                    <div class="wIcon">{{wCode[index]}}</div>
                     <div class="tempContainer">
                         <span class="temp1">{{maxTemp[index]}}{{unit}}</span>
                         <span class="temp2">{{minTemp[index]}}{{unit}}</span>
@@ -25,7 +25,8 @@
     export default {
         name: 'next-prediction',
         props:['maxTemp', 'minTemp', 'unit', 'date', 'wCode'],
-        emits: ['changeToFah', 'changeToCel']
+        emits: ['changeToFah', 'changeToCel'],
+        
     }
 </script>
 
@@ -83,7 +84,7 @@
     line-height: 18.78px;
 }
 
-.icon {
+.wIcon {
     margin-top: 10px;
     width: 56.44px;
 }
