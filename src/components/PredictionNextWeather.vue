@@ -9,7 +9,8 @@
             <div v-for="(card, index) in ['card1', 'card2', 'card3', 'card4', 'card5']" :key="card">
                 <div class="predictions">
                     <div class="date">{{date[index]}}</div>
-                    <div class="wIcon">{{wCode[index]}}</div>
+                    <img src="" alt="weatherIcon" class="wIcons">
+                    <div>{{wCode[index]}}</div>
                     <div class="tempContainer">
                         <span class="temp1">{{maxTemp[index]}}{{unit}}</span>
                         <span class="temp2">{{minTemp[index]}}{{unit}}</span>
@@ -24,9 +25,42 @@
 <script>
     export default {
         name: 'next-prediction',
-        props:['maxTemp', 'minTemp', 'unit', 'date', 'wCode'],
+        props:['maxTemp', 'minTemp', 'unit', 'date', 'wCode', 'iconsSrc'],
         emits: ['changeToFah', 'changeToCel'],
-        
+        mounted() {
+            const nextDayIcon = document.getElementsByClassName('wIcons')
+            for(let i = 0; i < nextDayIcon.length; i++) {
+                this.conditions(this.wCode[i], nextDayIcon[i])
+            }
+        },
+        methods: {
+            conditions(code, elem) {
+                if(code >= 0 && code <= 3) {elem.src = this.iconsSrc.clear} 
+                if(code >= 4 && code <= 9) {elem.src = this.iconsSrc.heavyCloud}
+                if(code >= 10 && code <= 12) {elem.src = this.iconsSrc.heavyCloud}
+                if(code == 13) {elem.src = this.iconsSrc.thunderstorm}
+                if(code >= 14 && code <= 16) {elem.src = this.iconsSrc.lightRain}
+                if(code == 17) {elem.src = this.iconsSrc.thunderstorm}
+                if(code == 18) {elem.src = this.iconsSrc.thunderstorm}
+                if(code == 19) {elem.src = this.iconsSrc.heavyCloud}
+                if(code >= 20 && code <= 28) {elem.src = this.iconsSrc.lightRain}
+                if(code == 29) {elem.src = this.iconsSrc.thunderstorm}
+                if(code >= 30 && code <= 35) {elem.src = this.iconsSrc.heavyCloud}
+                if(code >= 36 && code <= 39) {elem.src = this.iconsSrc.snow}
+                if(code >= 40 && code <= 49) {elem.src = this.iconsSrc.heavyCloud}
+                if(code >= 50 && code <= 59) {elem.src = this.iconsSrc.lightRain}
+                if(code >= 60 && code <= 69) {elem.src = this.iconsSrc.heavyRain}
+                if(code >= 70 && code <= 79) {elem.src = this.iconsSrc.snow}
+                if(code >= 80 && code <= 82) {elem.src = this.iconsSrc.heavyRain}
+                if(code >= 83 && code <= 84) {elem.src = this.iconsSrc.sleet}
+                if(code >= 85 && code <= 88) {elem.src = this.iconsSrc.snow}
+                if(code >= 89 && code <= 90) {elem.src = this.iconsSrc.hail}
+                if(code == 91) {elem.src = this.iconsSrc.lightRain}
+                if(code == 92) {elem.src = this.iconsSrc.heavyRain}
+                if(code >= 93 && code <= 94) {elem.src = this.iconsSrc.sleet}
+                if(code >= 95 && code <= 99) {elem.src = this.iconsSrc.thunderstorm}
+            },
+        }
     }
 </script>
 
@@ -84,7 +118,7 @@
     line-height: 18.78px;
 }
 
-.wIcon {
+.wIcons {
     margin-top: 10px;
     width: 56.44px;
 }
