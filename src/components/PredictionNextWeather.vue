@@ -1,18 +1,18 @@
 <template>
     <div>
         <div class="iContainer d-flex justify-content-end">
-            <button class="celcius">℃</button>
-            <button class="fahrenheit">℉</button>
+            <button class="celcius" @click="$emit('changeToCel')">℃</button>
+            <button class="fahrenheit" @click="$emit('changeToFah')">℉</button>
         </div>
 
         <div class="d-flex flex-wrap gap-4">
-            <div v-for="card in ['card1', 'card2', 'card3', 'card4', 'card5']" :key="card">
+            <div v-for="(card, index) in ['card1', 'card2', 'card3', 'card4', 'card5']" :key="card">
                 <div class="predictions">
-                    <div class="date">Tomorrow</div>
-                    <div class="icon"></div>
+                    <div class="date">{{date[index]}}</div>
+                    <div class="icon">{{wCode[index]}}</div>
                     <div class="tempContainer">
-                        <span class="temp1">11</span>
-                        <span class="temp2">12</span>
+                        <span class="temp1">{{maxTemp[index]}}{{unit}}</span>
+                        <span class="temp2">{{minTemp[index]}}{{unit}}</span>
                     </div>
                 </div>
             </div>
@@ -23,7 +23,9 @@
 
 <script>
     export default {
-        name: 'next-prediction'
+        name: 'next-prediction',
+        props:['maxTemp', 'minTemp', 'unit', 'date', 'wCode'],
+        emits: ['changeToFah', 'changeToCel']
     }
 </script>
 
@@ -70,7 +72,7 @@
     width: 120px;
     height: 177px;
     background-color: #1E213A;
-    padding: 18px 22px;
+    padding: 18px 13px;
     box-sizing: border-box;
     color: #E7E7EB;
 }
