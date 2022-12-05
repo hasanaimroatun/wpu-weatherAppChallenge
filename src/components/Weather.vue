@@ -63,6 +63,7 @@
                         :unit="unit" 
                         :date="nextDate" 
                         :wCode="nextWCode"
+                        :iconsSrc="iconsSrc"
                         @changeToCel="changeToCelcius"
                         @changeToFah="changeToFahrenheit"
                     />
@@ -142,6 +143,12 @@ import axios from 'axios'
                 console.log(err.message)
                 this.errorMsg = err.message
             })
+
+            // const nextDayIcon = document.getElementsByClassName('wIcons')
+            // for(let i = 0; i < nextDayIcon.length; i++) {
+            //     this.conditions(this.wCode[i], nextDayIcon[i])
+            // }
+        
         },
         updated() {
             console.log(this.chosenLoc)
@@ -196,102 +203,60 @@ import axios from 'axios'
             changeWeatherIcon() {
                 const icon = document.getElementsByClassName('icon')[0].childNodes[0]
                 
-                if(this.wCode >= 0 && this.wCode <= 3) {
-                    icon.src = this.iconsSrc.clear;
-                    this.weatherIndicator = 'Clear';
-                } 
-                if(this.wCode >= 4 && this.wCode <= 9) {
-                    icon.src = this.iconsSrc.heavyCloud;
-                    this.weatherIndicator = 'Haze/ Dust/ Sand/ Smoke';
-                }
-                if(this.wCode >= 10 && this.wCode <= 12) {
-                    icon.src = this.iconsSrc.heavyCloud;
-                    this.weatherIndicator = 'Mist/ Fog';
-                }
-                if(this.wCode == 13) {
-                    icon.src = this.iconsSrc.thunderstorm;
-                    this.weatherIndicator = 'Lightning';
-                }
-                if(this.wCode >= 14 && this.wCode <= 16) {
-                    icon.src = this.iconsSrc.lightRain;
-                    this.weatherIndicator = 'Drizzle';
-                }
-                if(this.wCode == 17) {
-                    icon.src = this.iconsSrc.thunderstorm;
-                    this.weatherIndicator = 'Thunderstorm';
-                }
-                if(this.wCode >= 18) {
-                    icon.src = this.iconsSrc.thunderstorm;
-                    this.weatherIndicator = 'Storm';
-                }
-                if(this.wCode <= 19) {
-                    icon.src = this.iconsSrc.heavyCloud;
-                    this.weatherIndicator = 'Funnel cloud';
-                }
-                if(this.wCode >= 20 && this.wCode <= 28) {
-                    icon.src = this.iconsSrc.lightRain;
-                    this.weatherIndicator = 'Precipitation/ Fog/ Ice fog';
-                }
-                if(this.wCode == 29) {
-                    icon.src = this.iconsSrc.thunderstorm;
-                    this.weatherIndicator = 'Thunderstorm';
-                }
-                if(this.wCode >= 30 && this.wCode <= 35) {
-                    icon.src = this.iconsSrc.heavyCloud;
-                    this.weatherIndicator = 'Duststorm/ Sandstorm';
-                }
-                if(this.wCode >= 36 && this.wCode <= 39) {
-                    icon.src = this.iconsSrc.snow;
-                    this.weatherIndicator = 'Drifting/ Blowing snow';
-                }
-                if(this.wCode >= 40 && this.wCode <= 49) {
-                    icon.src = this.iconsSrc.heavyCloud;
-                    this.weatherIndicator = 'Fog/ Ice fog';
-                }
-                if(this.wCode >= 50 && this.wCode <= 59) {
-                    icon.src = this.iconsSrc.lightRain;
-                    this.weatherIndicator = 'Drizzle';
-                }
-                if(this.wCode >= 60 && this.wCode <= 69) {
-                    icon.src = this.iconsSrc.heavyRain;
-                    this.weatherIndicator = 'Rain';
-                }
-                if(this.wCode >= 70 && this.wCode <= 79) {
-                    icon.src = this.iconsSrc.snow;
-                    this.weatherIndicator = 'Snow'
-                }
-                if(this.wCode >= 80 && this.wCode <= 82) {
-                    icon.src = this.iconsSrc.heavyRain;
-                    this.weatherIndicator = 'Rain';
-                }
-                if(this.wCode >= 83 && this.wCode <= 84) {
-                    icon.src = this.iconsSrc.sleet;
-                    this.weatherIndicator = 'Rain and Snow Mixed';
-                }
-                if(this.wCode >= 85 && this.wCode <= 88) {
-                    icon.src = this.iconsSrc.snow;
-                    this.weatherIndicator = 'Snow';
-                }
-                if(this.wCode >= 89 && this.wCode <= 90) {
-                    icon.src = this.iconsSrc.hail;
-                    this.weatherIndicator = 'Shower of Hail';
-                }
-                if(this.wCode == 91) {
-                    icon.src = this.iconsSrc.lightRain;
-                    this.weatherIndicator = 'Slight Rain';
-                }
-                if(this.wCode == 92) {
-                    icon.src = this.iconsSrc.heavyRain;
-                    this.weatherIndicator = 'Moderate/ Heavy Rain';
-                }
-                if(this.wCode >= 93 && this.wCode <= 94) {
-                    icon.src = this.iconsSrc.sleet;
-                    this.weatherIndicator = 'Snow/ Rain and Snow Mixed/ Hail'
-                }
-                if(this.wCode >= 95 && this.wCode <= 99) {
-                    icon.src = this.iconsSrc.thunderstorm;
-                    this.weatherIndicator = 'Thunderstorm';
-                }
+                this.conditions(this.wCode, icon)
+                this.labelWCondition()
+            },
+            conditions(code, elem) {
+                if(code >= 0 && code <= 3) {elem.src = this.iconsSrc.clear} 
+                if(code >= 4 && code <= 9) {elem.src = this.iconsSrc.heavyCloud}
+                if(code >= 10 && code <= 12) {elem.src = this.iconsSrc.heavyCloud}
+                if(code == 13) {elem.src = this.iconsSrc.thunderstorm}
+                if(code >= 14 && code <= 16) {elem.src = this.iconsSrc.lightRain}
+                if(code == 17) {elem.src = this.iconsSrc.thunderstorm}
+                if(code == 18) {elem.src = this.iconsSrc.thunderstorm}
+                if(code == 19) {elem.src = this.iconsSrc.heavyCloud}
+                if(code >= 20 && code <= 28) {elem.src = this.iconsSrc.lightRain}
+                if(code == 29) {elem.src = this.iconsSrc.thunderstorm}
+                if(code >= 30 && code <= 35) {elem.src = this.iconsSrc.heavyCloud}
+                if(code >= 36 && code <= 39) {elem.src = this.iconsSrc.snow}
+                if(code >= 40 && code <= 49) {elem.src = this.iconsSrc.heavyCloud}
+                if(code >= 50 && code <= 59) {elem.src = this.iconsSrc.lightRain}
+                if(code >= 60 && code <= 69) {elem.src = this.iconsSrc.heavyRain}
+                if(code >= 70 && code <= 79) {elem.src = this.iconsSrc.snow}
+                if(code >= 80 && code <= 82) {elem.src = this.iconsSrc.heavyRain}
+                if(code >= 83 && code <= 84) {elem.src = this.iconsSrc.sleet}
+                if(code >= 85 && code <= 88) {elem.src = this.iconsSrc.snow}
+                if(code >= 89 && code <= 90) {elem.src = this.iconsSrc.hail}
+                if(code == 91) {elem.src = this.iconsSrc.lightRain}
+                if(code == 92) {elem.src = this.iconsSrc.heavyRain}
+                if(code >= 93 && code <= 94) {elem.src = this.iconsSrc.sleet}
+                if(code >= 95 && code <= 99) {elem.src = this.iconsSrc.thunderstorm}
+            },
+            labelWCondition() {
+                if(this.wCode >= 0 && this.wCode <= 3) {this.weatherIndicator = 'Clear'} 
+                if(this.wCode >= 4 && this.wCode <= 9) {this.weatherIndicator = 'Haze/ Dust/ Sand/ Smoke'}
+                if(this.wCode >= 10 && this.wCode <= 12) {this.weatherIndicator = 'Mist/ Fog'}
+                if(this.wCode == 13) {this.weatherIndicator = 'Lightning'}
+                if(this.wCode >= 14 && this.wCode <= 16) {this.weatherIndicator = 'Drizzle'}
+                if(this.wCode == 17) {this.weatherIndicator = 'Thunderstorm'}
+                if(this.wCode == 18) {this.weatherIndicator = 'Storm'}
+                if(this.wCode == 19) {this.weatherIndicator = 'Funnel cloud'}
+                if(this.wCode >= 20 && this.wCode <= 28) {this.weatherIndicator = 'Precipitation/ Fog/ Ice fog'}
+                if(this.wCode == 29) {this.weatherIndicator = 'Thunderstorm'}
+                if(this.wCode >= 30 && this.wCode <= 35) {this.weatherIndicator = 'Duststorm/ Sandstorm'}
+                if(this.wCode >= 36 && this.wCode <= 39) {this.weatherIndicator = 'Drifting/ Blowing snow'}
+                if(this.wCode >= 40 && this.wCode <= 49) {this.weatherIndicator = 'Fog/ Ice fog'}
+                if(this.wCode >= 50 && this.wCode <= 59) {this.weatherIndicator = 'Drizzle'}
+                if(this.wCode >= 60 && this.wCode <= 69) {this.weatherIndicator = 'Rain'}
+                if(this.wCode >= 70 && this.wCode <= 79) {this.weatherIndicator = 'Snow'}
+                if(this.wCode >= 80 && this.wCode <= 82) {this.weatherIndicator = 'Rain'}
+                if(this.wCode >= 83 && this.wCode <= 84) {this.weatherIndicator = 'Rain and Snow Mixed'}
+                if(this.wCode >= 85 && this.wCode <= 88) {this.weatherIndicator = 'Snow'}
+                if(this.wCode >= 89 && this.wCode <= 90) {this.weatherIndicator = 'Shower of Hail'}
+                if(this.wCode == 91) {this.weatherIndicator = 'Slight Rain'}
+                if(this.wCode == 92) {this.weatherIndicator = 'Moderate/ Heavy Rain'}
+                if(this.wCode >= 93 && this.wCode <= 94) {this.weatherIndicator = 'Snow/ Rain and Snow Mixed/ Hail'}
+                if(this.wCode >= 95 && this.wCode <= 99) {this.weatherIndicator = 'Thunderstorm'}
             },
             updateDataFetching() {
                 this.todayTemperature = this.dataFetching.current_weather.temperature.toString().replace('.',',')
