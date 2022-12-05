@@ -4,7 +4,7 @@
         <div class="d-flex flex-wrap text-center cardContainer">
             <div class="card1 windStatus mb-4">
                 <div class="cardTitle">Wind status</div>
-                <div class="wind"><span>7</span>mph</div>
+                <div class="wind"><span>{{windSpeed}}</span>mph</div>
                 <div class="wIconContainer d-flex justify-content-center">
                     <button class="wIcon me-3"><i class="fa-solid fa-location-arrow"></i></button>
                     WSW
@@ -12,7 +12,7 @@
             </div>
             <div class="card1 humidity mb-4">
                 <div class="cardTitle">Humidity</div>
-                <div class="humid"><span>84</span>%</div>
+                <div class="humid"><span>{{humidity}}</span>%</div>
                 <div>
                     <div class="percentage d-flex">
                         <span>0</span>
@@ -20,7 +20,7 @@
                         <span>100</span>
                     </div>
                     <div class="progress">
-                        <div class="progress-bar w-75" role="progressbar" aria-label="Basic example" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
+                        <div class="progress-bar bg-warning" role="progressbar" aria-label="Warning example" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
                     </div>
                     <div class="text-end percentage">%</div>
                 </div>
@@ -30,11 +30,11 @@
         <div class="d-flex flex-wrap text-center cardContainer">
             <div class="card2 mb-4">
                 <div class="cardTitle">Visibility</div>
-                <div class="visible"><span>6,4</span>miles</div>
+                <div class="visible"><span>{{visibility}}</span>miles</div>
             </div>
             <div class="card2 mb-4">
                 <div class="cardTitle">Air Pressure</div>
-                <div class="pressure"><span>998</span>mb</div>
+                <div class="pressure"><span>{{pressure}}</span>mb</div>
             </div>
         </div>
     </div>
@@ -42,7 +42,14 @@
 
 <script>
     export default {
-        name: 'today-prediction'
+        name: 'today-prediction',
+        props: ['windSpeed', 'humidity', 'visibility', 'pressure'],
+        mounted() {
+            document.getElementsByClassName('progress-bar')[0].style.width=this.humidity + '%'
+        },
+        updated() {
+            document.getElementsByClassName('progress-bar')[0].style.width=this.humidity + '%'
+        }
     }
 </script>
 
