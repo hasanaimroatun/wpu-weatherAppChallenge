@@ -4,7 +4,7 @@
             <div class="col-md-4 sBar position-relative">
                 <div class="bgImage" />
 
-                <div class="navigationContainer position-absolute" :style="{width: '95%'}">
+                <div class="navigationContainer position-absolute" :style="{width: '95%', zIndex: '9999'}">
                     <nav class="navbar bg-transparent">
                         <div class="container-fluid d-flex flex-nowrap gap-4">
                             <button class="navbar-toggler navBtn" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
@@ -19,9 +19,10 @@
                                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                                 </div>
                                 <div class="offcanvas-body">
-                                    <form class="d-flex mt-3" role="search">
-                                        <input class="form-control me-2" type="search" placeholder="search location" aria-label="Search">
-                                        <button class="btn btn-primary" type="submit">Search</button>
+                                    <form class="d-flex mt-3 position-relative" role="search">
+                                        <i class="fa-solid fa-magnifying-glass position-absolute top-50 translate-middle" :style="{marginLeft: '16px'}"></i>
+                                        <input class="form-control me-2" type="search" placeholder="search location" aria-label="Search" v-model="chosenLoc">
+                                        <button class="btn btn-primary" type="button" @click="getLatLong">Search</button>
                                     </form>
                                     <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
                                         <li class="nav-item dropend">
@@ -43,19 +44,35 @@
                 </div>
 
                 <div class="now position-absolute start-50 translate-middle">
-                    <div class="icon"></div>
-                    <div class="temperature"><span>15</span>℃</div>
-                    <div class="weather">Rain</div>
-                    <div class="date">Today</div>
-                    <div class="location">Helsinski</div>
+                    <div class="icon"><img src="" alt="weather"></div>
+                    <div class="temperature">
+                        <span class="tNumb">{{fixTodayTemperature}}</span>
+                        <span class="unit">{{unit}}</span>
+                    </div>
+                    <div class="weather">{{weatherIndicator}} {{wCode}}</div>
+                    <div class="date">Today, {{todayDate[0]}} <div>Time {{todayDate[1]}}</div></div>
+                    <div class="location"><i class="fa-solid fa-location-dot me-2"></i>{{location}}</div>
                 </div>
             </div>
 
             <div class="col-md-8 mBar">
                 <div class="d-flex flex-column justify-content-center predictionContainer">
-                    <WeatherNextPrediction />
-                    <WeatherTodayPrediction />
-                    <div class="createdBy">created by <a href="https://github.com/hasanaimroatun/wpu-weatherAppChallenge">hasanaimroatun</a> - devChallenges.io</div>
+                    <WeatherNextPrediction 
+                        :maxTemp="fixMaxTemp" 
+                        :minTemp="fixMinTemp" 
+                        :unit="unit" 
+                        :date="nextDate" 
+                        :wCode="nextWCode"
+                        @changeToCel="changeToCelcius"
+                        @changeToFah="changeToFahrenheit"
+                    />
+                    <WeatherTodayPrediction 
+                        :windSpeed="todayWind" 
+                        :humidity="todayHumidity" 
+                        :visibility="todayVisibility" 
+                        :pressure="todayPressure"
+                    />
+                    <div class="createdBy">created by <a href="https://github.com/hasanaimroatun/wpu-weatherAppChallenge">hasanaimroatun</a> - devChallenges.io</div> 
                 </div>
             </div>
         </div>
@@ -75,24 +92,290 @@ import axios from 'axios'
         },
         data() {
             return {
-                today: [],
-                nextDay: [],
-                unit: [],
+                iconsSrc: {
+                    clear: require('@/assets/icon/Clear.png'),
+                    hail: require('@/assets/icon/Hail.png'),
+                    heavyCloud: require('@/assets/icon/HeavyCloud.png'),
+                    heavyRain: require('@/assets/icon/HeavyRain.png'),
+                    lightCloud: require('@/assets/icon/LightCloud.png'),
+                    lightRain: require('@/assets/icon/LightRain.png'),
+                    shower: require('@/assets/icon/Shower.png'),
+                    sleet: require('@/assets/icon/Sleet.png'),
+                    snow: require('@/assets/icon/Snow.png'),
+                    thunderstorm: require('@/assets/icon/Thunderstorm.png')
+                },
+                weatherIndicator: '',
+                chosenLoc: '',
+                dataGeoFetching: {},
+                lat: '',
+                long: '',
+                dataFetching: {},
+                unit:'',
+                todayTemperature: '',
+                fixTodayTemperature: '',
+                todayDate: '',
+                todayWind: '',
+                todayHumidity: '',
+                todayVisibility: '',
+                todayPressure: '',
+                wCode: '',
+                location: '',
+                nextMaxTemp: [],
+                nextMinTemp:[],
+                nextWCode: [],
+                nextDate: [],
+                fixMaxTemp: [],
+                fixMinTemp: [],
                 errorMsg: ''
+                
             }
         },
         mounted() {
             axios
-            .get('https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&current_weather=true&hourly=temperature_2m,relativehumidity_2m,surface_pressure,precipitation,visibility,windspeed_10m&daily=weathercode,precipitation_sum,et0_fao_evapotranspiration&windspeed_unit=mph&timezone=auto')
+            .get('https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&current_weather=true&hourly=temperature_2m,relativehumidity_2m,surface_pressure,precipitation,visibility,windspeed_10m&daily=weathercode,temperature_2m_max,temperature_2m_min&windspeed_unit=mph&timezone=auto')
             .then((res) => {
-                console.log(res.data)
-                this.today = res.data
-                console.log(this.today)
+                this.dataFetching = res.data
+                console.log(this.dataFetching)
+                this.updateDataFetching()
             })
             .catch(err => {
                 console.log(err.message)
                 this.errorMsg = err.message
             })
+        },
+        updated() {
+            console.log(this.chosenLoc)
+        },
+        methods: {
+            getLocation() {
+                if(navigator.geolocation) {
+                    console.log('Geolocation is supported')
+                    navigator.geolocation.getCurrentPosition((position) => {
+                        this.lat = position.coords.latitude
+                        this.long = position.coords.longitude
+                        console.log(this.lat)
+                        console.log(this.long)
+                    }, (err) => {
+                        console.log(err)
+                    })
+                } else {
+                    console.log('Geolocation is not supported by this browser.')
+                }
+            },
+            getLatLong() {
+                if(this.chosenLoc !== '') {
+                    axios
+                    .get('https://geocoding-api.open-meteo.com/v1/search?name='+ this.chosenLoc + '&count=1')
+                    .then((res) => {
+                        this.dataGeoFetching = res.data
+                        this.lat = this.dataGeoFetching.results[0].latitude
+                        this.long = this.dataGeoFetching.results[0].longitude
+                        console.log(this.lat)
+                        console.log(this.long)
+                    })
+                    .catch((err) => {
+                        console.log(err.message)
+                    })
+
+                    setTimeout(function() {
+                        axios
+                        .get('https://api.open-meteo.com/v1/forecast?latitude=' + this.lat + '&longitude=' + this.long + '&current_weather=true&hourly=temperature_2m,relativehumidity_2m,surface_pressure,precipitation,visibility,windspeed_10m&daily=weathercode,temperature_2m_max,temperature_2m_min&windspeed_unit=mph&timezone=auto')
+                        .then((res) => {
+                            this.dataFetching = res.data
+                            console.log(this.dataFetching)
+                            this.updateDataFetching()
+                        })
+                        .catch(err => {
+                            console.log(err.message)
+                            this.errorMsg = err.message
+                        })
+                    }, 2000)
+                
+                }
+            },
+            changeWeatherIcon() {
+                const icon = document.getElementsByClassName('icon')[0].childNodes[0]
+                
+                if(this.wCode >= 0 && this.wCode <= 3) {
+                    icon.src = this.iconsSrc.clear;
+                    this.weatherIndicator = 'Clear';
+                } 
+                if(this.wCode >= 4 && this.wCode <= 9) {
+                    icon.src = this.iconsSrc.heavyCloud;
+                    this.weatherIndicator = 'Haze/ Dust/ Sand/ Smoke';
+                }
+                if(this.wCode >= 10 && this.wCode <= 12) {
+                    icon.src = this.iconsSrc.heavyCloud;
+                    this.weatherIndicator = 'Mist/ Fog';
+                }
+                if(this.wCode == 13) {
+                    icon.src = this.iconsSrc.thunderstorm;
+                    this.weatherIndicator = 'Lightning';
+                }
+                if(this.wCode >= 14 && this.wCode <= 16) {
+                    icon.src = this.iconsSrc.lightRain;
+                    this.weatherIndicator = 'Drizzle';
+                }
+                if(this.wCode == 17) {
+                    icon.src = this.iconsSrc.thunderstorm;
+                    this.weatherIndicator = 'Thunderstorm';
+                }
+                if(this.wCode >= 18) {
+                    icon.src = this.iconsSrc.thunderstorm;
+                    this.weatherIndicator = 'Storm';
+                }
+                if(this.wCode <= 19) {
+                    icon.src = this.iconsSrc.heavyCloud;
+                    this.weatherIndicator = 'Funnel cloud';
+                }
+                if(this.wCode >= 20 && this.wCode <= 28) {
+                    icon.src = this.iconsSrc.lightRain;
+                    this.weatherIndicator = 'Precipitation/ Fog/ Ice fog';
+                }
+                if(this.wCode == 29) {
+                    icon.src = this.iconsSrc.thunderstorm;
+                    this.weatherIndicator = 'Thunderstorm';
+                }
+                if(this.wCode >= 30 && this.wCode <= 35) {
+                    icon.src = this.iconsSrc.heavyCloud;
+                    this.weatherIndicator = 'Duststorm/ Sandstorm';
+                }
+                if(this.wCode >= 36 && this.wCode <= 39) {
+                    icon.src = this.iconsSrc.snow;
+                    this.weatherIndicator = 'Drifting/ Blowing snow';
+                }
+                if(this.wCode >= 40 && this.wCode <= 49) {
+                    icon.src = this.iconsSrc.heavyCloud;
+                    this.weatherIndicator = 'Fog/ Ice fog';
+                }
+                if(this.wCode >= 50 && this.wCode <= 59) {
+                    icon.src = this.iconsSrc.lightRain;
+                    this.weatherIndicator = 'Drizzle';
+                }
+                if(this.wCode >= 60 && this.wCode <= 69) {
+                    icon.src = this.iconsSrc.heavyRain;
+                    this.weatherIndicator = 'Rain';
+                }
+                if(this.wCode >= 70 && this.wCode <= 79) {
+                    icon.src = this.iconsSrc.snow;
+                    this.weatherIndicator = 'Snow'
+                }
+                if(this.wCode >= 80 && this.wCode <= 82) {
+                    icon.src = this.iconsSrc.heavyRain;
+                    this.weatherIndicator = 'Rain';
+                }
+                if(this.wCode >= 83 && this.wCode <= 84) {
+                    icon.src = this.iconsSrc.sleet;
+                    this.weatherIndicator = 'Rain and Snow Mixed';
+                }
+                if(this.wCode >= 85 && this.wCode <= 88) {
+                    icon.src = this.iconsSrc.snow;
+                    this.weatherIndicator = 'Snow';
+                }
+                if(this.wCode >= 89 && this.wCode <= 90) {
+                    icon.src = this.iconsSrc.hail;
+                    this.weatherIndicator = 'Shower of Hail';
+                }
+                if(this.wCode == 91) {
+                    icon.src = this.iconsSrc.lightRain;
+                    this.weatherIndicator = 'Slight Rain';
+                }
+                if(this.wCode == 92) {
+                    icon.src = this.iconsSrc.heavyRain;
+                    this.weatherIndicator = 'Moderate/ Heavy Rain';
+                }
+                if(this.wCode >= 93 && this.wCode <= 94) {
+                    icon.src = this.iconsSrc.sleet;
+                    this.weatherIndicator = 'Snow/ Rain and Snow Mixed/ Hail'
+                }
+                if(this.wCode >= 95 && this.wCode <= 99) {
+                    icon.src = this.iconsSrc.thunderstorm;
+                    this.weatherIndicator = 'Thunderstorm';
+                }
+            },
+            updateDataFetching() {
+                this.todayTemperature = this.dataFetching.current_weather.temperature.toString().replace('.',',')
+                this.fixTodayTemperature = this.todayTemperature
+
+                this.todayDate = this.dataFetching.current_weather.time.toString().split('T')
+                this.wCode = parseInt(this.dataFetching.current_weather.weathercode)
+                this.changeWeatherIcon()
+
+                // wind speed
+                this.todayWind = this.dataFetching.current_weather.windspeed.toString().replace('.',',')
+
+                // humidity
+                var h = 0
+                for(let i = 0; i < this.dataFetching.hourly.relativehumidity_2m.length; i++) {
+                    h += this.dataFetching.hourly.relativehumidity_2m[i]
+                }
+                this.todayHumidity = Math.round(h / this.dataFetching.hourly.relativehumidity_2m.length)
+                
+                // air pressure
+                var p = 0
+                for(let i = 0; i < this.dataFetching.hourly.surface_pressure.length; i++) {
+                    p += this.dataFetching.hourly.surface_pressure[i]
+                }
+                this.todayPressure = Math.round(p / this.dataFetching.hourly.surface_pressure.length)
+                
+                // visibility
+                var v = 0
+                for(let i = 0; i < this.dataFetching.hourly.visibility.length; i++) {
+                    v += this.dataFetching.hourly.visibility[i]
+                }
+                this.todayVisibility = ((v / this.dataFetching.hourly.visibility.length)*0.00062137).toFixed(1).replace('.',',')
+
+                this.unit = this.dataFetching.hourly_units.temperature_2m.toString()
+                this.location = this.dataFetching.timezone
+                
+                // next day
+                // max temperature
+                this.nextMaxTemp = []
+                for(let i = 1; i < 6; i++) {
+                    this.nextMaxTemp.push(this.dataFetching.daily.temperature_2m_max[i].toString().replace('.',','))
+                }
+                this.fixMaxTemp = this.nextMaxTemp
+
+                // min temperature
+                this.nextMinTemp = []
+                for(let i = 1; i < 6; i++) {
+                    this.nextMinTemp.push(this.dataFetching.daily.temperature_2m_min[i].toString().replace('.',','))
+                }
+                this.fixMinTemp = this.nextMinTemp
+
+                // date
+                this.nextDate = ['Tomorrow']
+                for(let i = 2; i < 6; i++) {
+                    this.nextDate.push(this.dataFetching.daily.time[i].toString())
+                }
+
+                // weather code
+                this.nextWCode = []
+                for(let i = 1; i < 6; i++) {
+                    this.nextWCode.push(this.dataFetching.daily.weathercode[i])
+                }
+            },
+            changeToCelcius() {
+                this.fixMaxTemp = this.nextMaxTemp
+                this.fixMinTemp = this.nextMinTemp
+                this.fixTodayTemperature = this.todayTemperature
+                this.unit='°C'
+            },
+            changeToFahrenheit() {
+                this.fixMaxTemp = []
+                for(let i = 0; i < this.nextMaxTemp.length; i++) {
+                    this.fixMaxTemp.push(((this.nextMaxTemp[i].replace(',','.') * 9/5) + 32).toFixed(1).toString().replace('.',',')) 
+                }
+                
+                this.fixMinTemp = []
+                for(let i = 0; i < this.nextMinTemp.length; i++) {
+                    this.fixMinTemp.push(((this.nextMinTemp[i].replace(',','.') * 9/5) + 32).toFixed(1).toString().replace('.',',')) 
+                }
+
+                this.fixTodayTemperature = ((this.todayTemperature.replace(',','.') * 9/5) + 32).toFixed(1).toString().replace('.',',')
+                this.unit='°F'
+            },
+            
         }
     }
 </script>
@@ -173,7 +456,7 @@ import axios from 'axios'
     border-radius: 0;
     background: transparent;
     border: 1px solid #E7E7EB;
-    padding-left: 49px;
+    padding-left: 30px;
 }
 
 .offcanvas-body input, 
@@ -226,6 +509,7 @@ import axios from 'axios'
 
 .icon {
     width: 202px;
+    margin-top: 300px;
 }
 
 .icon,
@@ -234,14 +518,15 @@ import axios from 'axios'
     margin-bottom: 87px;
 }
 
-.temperature {
-    font-weight: 100;
+.temperature .unit {
+    font-family: 'Raleway', sans-serif;
+    font-weight: 500;
     font-size: 48px;
     line-height: 56.35px;
     color: #A09FB1;
 }
 
-.temperature span {
+.temperature .tNumb {
     font-weight: 500;
     font-size: 114px;
     color: #E7E7EB;
