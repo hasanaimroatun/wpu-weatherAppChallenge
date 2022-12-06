@@ -7,17 +7,15 @@
 
         <div class="d-flex flex-wrap gap-4">
             <div v-for="(card, index) in ['card1', 'card2', 'card3', 'card4', 'card5']" :key="card">
-                <div class="predictions">
+                <div class="predictions position-relative">
                     <div class="date">{{date[index]}}</div>
                     <img src="" alt="weatherIcon" class="wIcons">
-                    <div>{{wCode[index]}}</div>
-                    <div class="tempContainer">
+                    <div class="tempContainer position-absolute top-100 start-50 translate-middle">
                         <span class="temp1">{{maxTemp[index]}}{{unit}}</span>
                         <span class="temp2">{{minTemp[index]}}{{unit}}</span>
                     </div>
                 </div>
             </div>
-            
         </div>
     </div>
 </template>
@@ -26,15 +24,12 @@
     export default {
         name: 'next-prediction',
         props:['maxTemp', 'minTemp', 'unit', 'date', 'wCode', 'iconsSrc'],
-        emits: ['changeToFah', 'changeToCel'],
+        emits: ['changeToFah', 'changeToCel'], 
         mounted() {
-            const nextDayIcon = document.getElementsByClassName('wIcons')
-            
-            this.conditions(this.wCode[0], nextDayIcon[0])
-            this.conditions(this.wCode[1], nextDayIcon[1])
-            this.conditions(this.wCode[2], nextDayIcon[2])
-            this.conditions(this.wCode[3], nextDayIcon[3])
-            this.conditions(this.wCode[4], nextDayIcon[4])
+            this.updateIcon()
+        },
+        updated() {
+            this.updateIcon()
         },
         methods: {
             conditions(code, elem) {
@@ -63,6 +58,12 @@
                 if(code >= 93 && code <= 94) {elem.src = this.iconsSrc.sleet}
                 if(code >= 95 && code <= 99) {elem.src = this.iconsSrc.thunderstorm}
             },
+            updateIcon() {
+                const nextDayIcon = document.getElementsByClassName('wIcons')
+                for(let i = 0; i < nextDayIcon.length; i++) {
+                    this.conditions(this.wCode[i], nextDayIcon[i])
+                }
+            }
         }
     }
 </script>
@@ -127,9 +128,9 @@
 }
 
 .tempContainer {
-    margin-top: 31px;
     display: flex;
-    justify-content: space-between;
+    gap: 15px;
+    margin-top: -28px;
 }
 
 .tempContainer span {
