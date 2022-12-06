@@ -109,8 +109,6 @@ import axios from 'axios'
                 weatherIndicator: '',
                 chosenLoc: '',
                 dataGeoFetching: {},
-                lat: '',
-                long: '',
                 dataFetching: {},
                 unit:'',
                 todayTemperature: '',
@@ -145,11 +143,6 @@ import axios from 'axios'
                 console.log(err.message)
                 this.errorMsg = err.message
             })
-
-            // const nextDayIcon = document.getElementsByClassName('wIcons')
-            // for(let i = 0; i < nextDayIcon.length; i++) {
-            //     this.conditions(this.wCode[i], nextDayIcon[i])
-            // }
         
         },
         updated() {
@@ -172,23 +165,29 @@ import axios from 'axios'
                 }
             },
             getLatLong() {
+                var c = {
+                    lat: '',
+                    long: ''
+                }
                 if(this.chosenLoc !== '') {
                     axios
                     .get('https://geocoding-api.open-meteo.com/v1/search?name='+ this.chosenLoc + '&count=1')
                     .then((res) => {
                         this.dataGeoFetching = res.data
-                        this.lat = this.dataGeoFetching.results[0].latitude
-                        this.long = this.dataGeoFetching.results[0].longitude
-                        console.log(this.lat)
-                        console.log(this.long)
+                        c.lat = this.dataGeoFetching.results[0].latitude.toFixed(2)
+                        c.long = this.dataGeoFetching.results[0].longitude.toFixed(2)
+                        console.log(c)
+                        // console.log(this.long)
                     })
                     .catch((err) => {
                         console.log(err.message)
                     })
 
-                    setTimeout(function() {
+                    setTimeout(() => {
+                        const x = c.lat
+                        const y = c.long
                         axios
-                        .get('https://api.open-meteo.com/v1/forecast?latitude=' + this.lat + '&longitude=' + this.long + '&current_weather=true&hourly=temperature_2m,relativehumidity_2m,surface_pressure,precipitation,visibility,windspeed_10m&daily=weathercode,temperature_2m_max,temperature_2m_min&windspeed_unit=mph&timezone=auto')
+                        .get('https://api.open-meteo.com/v1/forecast?latitude=' + x + '&longitude=' + y + '&current_weather=true&hourly=temperature_2m,relativehumidity_2m,surface_pressure,precipitation,visibility,windspeed_10m&daily=weathercode,temperature_2m_max,temperature_2m_min&windspeed_unit=mph&timezone=auto')
                         .then((res) => {
                             this.dataFetching = res.data
                             console.log(this.dataFetching)
@@ -198,8 +197,7 @@ import axios from 'axios'
                             console.log(err.message)
                             this.errorMsg = err.message
                         })
-                    }, 2000)
-                
+                    }, 1000)
                 }
             },
             changeWeatherIcon() {
