@@ -50,7 +50,7 @@
                         <span class="unit">{{unit}}</span>
                     </div>
                     <div class="weather">{{weatherIndicator}} {{wCode}}</div>
-                    <div class="date">Today, {{todayDate[0]}} <div>Time {{todayDate[1]}}</div></div>
+                    <div class="date d-flex gap-3 justify-content-center">Today<span>.</span>{{todayDate}}</div>
                     <div class="location"><i class="fa-solid fa-location-dot me-2"></i>{{location}}</div>
                 </div>
             </div>
@@ -105,6 +105,7 @@ import axios from 'axios'
                     snow: require('@/assets/icon/Snow.png'),
                     thunderstorm: require('@/assets/icon/Thunderstorm.png')
                 },
+                months: ['list:', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
                 weatherIndicator: '',
                 chosenLoc: '',
                 dataGeoFetching: {},
@@ -125,6 +126,7 @@ import axios from 'axios'
                 nextMinTemp:[],
                 nextWCode: [],
                 nextDate: [],
+                nextDays: [],
                 fixMaxTemp: [],
                 fixMinTemp: [],
                 errorMsg: ''
@@ -262,7 +264,10 @@ import axios from 'axios'
                 this.todayTemperature = this.dataFetching.current_weather.temperature.toString().replace('.',',')
                 this.fixTodayTemperature = this.todayTemperature
 
-                this.todayDate = this.dataFetching.current_weather.time.toString().split('T')
+                // todayDate
+                let tDate = new Date(this.dataFetching.current_weather.time).toString().split(' ')
+                this.todayDate = tDate[0] + ', ' + parseInt(tDate[2]) + ' ' + tDate[1]
+                
                 this.wCode = parseInt(this.dataFetching.current_weather.weathercode)
                 this.changeWeatherIcon()
 
@@ -310,8 +315,13 @@ import axios from 'axios'
 
                 // date
                 this.nextDate = ['Tomorrow']
+                var rawDate = []
+                
                 for(let i = 2; i < 6; i++) {
-                    this.nextDate.push(this.dataFetching.daily.time[i].toString())
+                    rawDate.push(new Date(this.dataFetching.daily.time[i]).toString().split(' '))
+                }
+                for(let i = 0; i < rawDate.length; i++) {
+                    this.nextDate.push(rawDate[i][0] + ', ' + parseInt(rawDate[i][2]) + ' ' + rawDate[i][1])
                 }
 
                 // weather code
