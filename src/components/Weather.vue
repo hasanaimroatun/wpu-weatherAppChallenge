@@ -22,20 +22,17 @@
                                     <form class="d-flex mt-3 position-relative" role="search">
                                         <i class="fa-solid fa-magnifying-glass position-absolute top-50 translate-middle" :style="{marginLeft: '16px'}"></i>
                                         <input class="form-control me-2" type="search" placeholder="search location" aria-label="Search" v-model="chosenLoc">
-                                        <button class="btn btn-primary" type="button" @click="getLatLong">Search</button>
+                                        <button class="btn btn-primary" type="button" @click="addCity">Search</button>
                                     </form>
                                     <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
-                                        <li class="nav-item dropend">
-                                            <button type="button" class="btn btn-secondary position-relative" data-bs-toggle="dropdown" aria-expanded="false">
-                                                Dropend
-                                                <i class="fa-solid fa-chevron-right position-absolute end-0 translete-middle"></i>
-                                            </button>
-                                            <ul class="dropdown-menu">
-                                                <li><a class="dropdown-item" href="#">Action</a></li>
-                                                <li><a class="dropdown-item" href="#">Another action</a></li>
-                                                <li><a class="dropdown-item" href="#">Something else here</a></li>
-                                            </ul>
-                                        </li>
+                                        <div v-if="cityContainer.length !== 0">
+                                            <li class="nav-item">
+                                                <button type="button" class="btn btn-secondary position-relative" @click="getLatLong">
+                                                    {{cityContainer[0]}}
+                                                    <i class="fa-solid fa-chevron-right position-absolute end-0 translete-middle"></i>
+                                                </button>
+                                            </li>
+                                        </div>
                                     </ul>
                                 </div>
                             </div>
@@ -51,7 +48,7 @@
                     </div>
                     <div class="weather">{{weatherIndicator}} {{wCode}}</div>
                     <div class="date d-flex gap-3 justify-content-center">Today<span>.</span>{{todayDate}}</div>
-                    <div class="location"><i class="fa-solid fa-location-dot me-2"></i>{{location}}</div>
+                    <div class="location"><i class="fa-solid fa-location-dot me-2"></i>{{cityContainer[0]}}</div>
                 </div>
             </div>
 
@@ -108,6 +105,10 @@ import axios from 'axios'
                 months: ['list:', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
                 weatherIndicator: '',
                 chosenLoc: '',
+                locCoord: {
+                    lat: '',
+                    long: ''
+                },
                 dataGeoFetching: {},
                 dataFetching: {},
                 unit:'',
@@ -119,7 +120,6 @@ import axios from 'axios'
                 todayVisibility: '',
                 todayPressure: '',
                 wCode: '',
-                location: '',
                 nextMaxTemp: [],
                 nextMinTemp:[],
                 nextWCode: [],
@@ -127,7 +127,7 @@ import axios from 'axios'
                 nextDays: [],
                 fixMaxTemp: [],
                 fixMinTemp: [],
-                errorMsg: ''
+                cityContainer: ['Berlin ( Germany )']
                 
             }
         },
@@ -141,12 +141,12 @@ import axios from 'axios'
             })
             .catch(err => {
                 console.log(err.message)
-                this.errorMsg = err.message
+                alert(err.message)
             })
         
         },
         updated() {
-            console.log(this.chosenLoc)
+            
         },
         methods: {
             getLocation() {
@@ -164,28 +164,29 @@ import axios from 'axios'
                     console.log('Geolocation is not supported by this browser.')
                 }
             },
-            getLatLong() {
-                var c = {
-                    lat: '',
-                    long: ''
-                }
+            addCity() {
                 if(this.chosenLoc !== '') {
                     axios
                     .get('https://geocoding-api.open-meteo.com/v1/search?name='+ this.chosenLoc + '&count=1')
                     .then((res) => {
                         this.dataGeoFetching = res.data
-                        c.lat = this.dataGeoFetching.results[0].latitude.toFixed(2)
-                        c.long = this.dataGeoFetching.results[0].longitude.toFixed(2)
-                        console.log(c)
-                        // console.log(this.long)
+                        this.locCoord.lat = this.dataGeoFetching.results[0].latitude.toFixed(2)
+                        this.locCoord.long = this.dataGeoFetching.results[0].longitude.toFixed(2)
+                        this.cityContainer = []
+                        this.cityContainer.push(this.dataGeoFetching.results[0].name + ' ( ' +  this.dataGeoFetching.results[0].country + ' )')
+                        console.log(this.dataGeoFetching.results[0])
                     })
                     .catch((err) => {
                         console.log(err.message)
+                        alert(err.message)
                     })
-
+                }
+            },
+            getLatLong() {
+                if(this.cityContainer.length !== 0) {
                     setTimeout(() => {
-                        const x = c.lat
-                        const y = c.long
+                        const x = this.locCoord.lat
+                        const y = this.locCoord.long
                         axios
                         .get('https://api.open-meteo.com/v1/forecast?latitude=' + x + '&longitude=' + y + '&current_weather=true&hourly=temperature_2m,relativehumidity_2m,surface_pressure,precipitation,visibility,windspeed_10m&daily=weathercode,temperature_2m_max,temperature_2m_min&windspeed_unit=mph&timezone=auto')
                         .then((res) => {
@@ -195,9 +196,9 @@ import axios from 'axios'
                         })
                         .catch(err => {
                             console.log(err.message)
-                            this.errorMsg = err.message
+                            alert(err.message)
                         })
-                    }, 1000)
+                    }, 200)
                 }
             },
             changeWeatherIcon() {
@@ -259,13 +260,15 @@ import axios from 'axios'
                 if(this.wCode >= 95 && this.wCode <= 99) {this.weatherIndicator = 'Thunderstorm'}
             },
             updateDataFetching() {
+                // today temperature
                 this.todayTemperature = this.dataFetching.current_weather.temperature.toString().replace('.',',')
                 this.fixTodayTemperature = this.todayTemperature
 
-                // todayDate
+                // today date
                 let tDate = new Date(this.dataFetching.current_weather.time).toString().split(' ')
                 this.todayDate = tDate[0] + ', ' + parseInt(tDate[2]) + ' ' + tDate[1]
                 
+                // weather code
                 this.wCode = parseInt(this.dataFetching.current_weather.weathercode)
                 this.changeWeatherIcon()
 
@@ -293,8 +296,8 @@ import axios from 'axios'
                 }
                 this.todayVisibility = ((v / this.dataFetching.hourly.visibility.length)*0.00062137).toFixed(1).replace('.',',')
 
+                // temperature unit
                 this.unit = this.dataFetching.hourly_units.temperature_2m.toString()
-                this.location = this.dataFetching.timezone
                 
                 // next day
                 // max temperature
@@ -464,7 +467,8 @@ import axios from 'axios'
     height: 64px;
 }
 
-.nav-item button:hover {
+.nav-item button:hover,
+.nav-item button:focus {
     border: 1px solid #616475;
 }
 
@@ -525,6 +529,7 @@ import axios from 'axios'
     font-size: 18px;
     line-height: 21.13px;
     color: #88869D;
+    white-space: nowrap;
 }
 
 .mBar {
