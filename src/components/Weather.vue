@@ -10,7 +10,7 @@
                             <button class="navbar-toggler navBtn" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
                                 Search for Places
                             </button>
-                            <button class="navbar-toggler navIcon" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
+                            <button class="navIcon" type="button" @click="getLocation">
                                 <i class="fa-solid fa-location-crosshairs"></i>
                             </button>
                             
@@ -46,7 +46,7 @@
                         <span class="tNumb">{{fixTodayTemperature}}</span>
                         <span class="unit">{{unit}}</span>
                     </div>
-                    <div class="weather">{{weatherIndicator}} {{wCode}}</div>
+                    <div class="weather">{{weatherIndicator}}</div>
                     <div class="date d-flex gap-3 justify-content-center">Today<span>.</span>{{todayDate}}</div>
                     <div class="location"><i class="fa-solid fa-location-dot me-2"></i>{{cityContainer[0]}}</div>
                 </div>
@@ -128,7 +128,6 @@ import axios from 'axios'
                 fixMaxTemp: [],
                 fixMinTemp: [],
                 cityContainer: ['Berlin ( Germany )']
-                
             }
         },
         mounted() {
@@ -136,7 +135,6 @@ import axios from 'axios'
             .get('https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&current_weather=true&hourly=temperature_2m,relativehumidity_2m,surface_pressure,precipitation,visibility,windspeed_10m&daily=weathercode,temperature_2m_max,temperature_2m_min&windspeed_unit=mph&timezone=auto')
             .then((res) => {
                 this.dataFetching = res.data
-                console.log(this.dataFetching)
                 this.updateDataFetching()
             })
             .catch(err => {
@@ -153,12 +151,17 @@ import axios from 'axios'
                 if(navigator.geolocation) {
                     console.log('Geolocation is supported')
                     navigator.geolocation.getCurrentPosition((position) => {
-                        this.lat = position.coords.latitude
-                        this.long = position.coords.longitude
-                        console.log(this.lat)
-                        console.log(this.long)
+                        this.locCoord.lat = position.coords.latitude.toFixed(2)
+                        this.locCoord.long = position.coords.longitude.toFixed(2)
+
+                        this.getLatLong()
+                        setTimeout(() => {
+                            this.cityContainer = []
+                            this.cityContainer.push('Your Location ( ' + this.dataFetching.timezone + ' )')
+                        }, 300)
                     }, (err) => {
-                        console.log(err)
+                        console.log(err.message)
+                        alert(err.message)
                     })
                 } else {
                     console.log('Geolocation is not supported by this browser.')
@@ -174,7 +177,6 @@ import axios from 'axios'
                         this.locCoord.long = this.dataGeoFetching.results[0].longitude.toFixed(2)
                         this.cityContainer = []
                         this.cityContainer.push(this.dataGeoFetching.results[0].name + ' ( ' +  this.dataGeoFetching.results[0].country + ' )')
-                        console.log(this.dataGeoFetching.results[0])
                     })
                     .catch((err) => {
                         console.log(err.message)
@@ -191,7 +193,6 @@ import axios from 'axios'
                         .get('https://api.open-meteo.com/v1/forecast?latitude=' + x + '&longitude=' + y + '&current_weather=true&hourly=temperature_2m,relativehumidity_2m,surface_pressure,precipitation,visibility,windspeed_10m&daily=weathercode,temperature_2m_max,temperature_2m_min&windspeed_unit=mph&timezone=auto')
                         .then((res) => {
                             this.dataFetching = res.data
-                            console.log(this.dataFetching)
                             this.updateDataFetching()
                         })
                         .catch(err => {
@@ -405,17 +406,14 @@ import axios from 'axios'
 }
 
 .fa-location-crosshairs {
-    margin-left: -3px;
+    margin-top: 5px;
     color: #E7E7EB;
 }
 
-.fa-location-crosshairs:hover {
-    color: #6E707A;
-}
-
-.navbar-toggler:hover {
-    background-color: #E7E7EB;
-    border: 1px solid #E7E7EB;
+.navbar-toggler:hover,
+.navIcon:hover {
+    background-color: #a3a3a3;
+    border: 1px solid #a3a3a3;
     color: #6E707A;
 }
 
