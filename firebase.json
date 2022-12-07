@@ -1,5 +1,6 @@
 {
   "hosting": {
+    "site": "weather-app-challenge-003",
     "public": "dist",
     "ignore": [
       "firebase.json",
