@@ -46,6 +46,8 @@ You can see my demo on . I have have interest in web development since a few mon
 - [VSCode](https://code.visualstudio.com)
 - [Font Awesome](https://fontawesome.com)
 - [Fire Base Hosting](https://firebase.google.com)
+- [Geocoding API](https://open-meteo.com/en/docs/geocoding-api)
+- [Weather Forecast API](https://open-meteo.com/en/docs)
 
 ## Features
 
