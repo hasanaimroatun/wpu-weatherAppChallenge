@@ -17,11 +17,13 @@
     "bootstrap": "^5.2.3",
     "core-js": "^3.8.3",
     "firebase": "^9.14.0",
+    "node-geocoder": "^4.2.0",
     "vue": "^3.2.13"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",
     "@babel/eslint-parser": "^7.12.16",
+    "@types/node-geocoder": "^3.24.5",
     "@vue/cli-plugin-babel": "~5.0.0",
     "@vue/cli-plugin-eslint": "~5.0.0",
     "@vue/cli-service": "~5.0.0",
