@@ -48,6 +48,7 @@ You can see my demo on https://weather-app-challenge-003.web.app. I have have in
 - [Fire Base Hosting](https://firebase.google.com)
 - [Geocoding API](https://open-meteo.com/en/docs/geocoding-api)
 - [Weather Forecast API](https://open-meteo.com/en/docs)
+- [Mapquest API](https://www.mapquestapi.com)
 
 ## Features
 
