@@ -142,6 +142,10 @@ import axios from 'axios'
                 console.log(err.message)
                 alert(err.message)
             })
+
+            setTimeout(() => {
+                this.getLocation()
+            }, 100)
         
         },
         methods: {
