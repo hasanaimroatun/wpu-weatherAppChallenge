@@ -168,18 +168,20 @@ import axios from 'axios'
 
                         this.getLatLong()
                         setTimeout(() => {
-                            axios
-                            .get('http://www.mapquestapi.com/geocoding/v1/reverse?key=MBad3yJ2pJJATxnArTif6FYh8D2MPFJw&location=' + this.locCoord.lat + ','+ this.locCoord.long +'&includeRoadMetadata=true&includeNearestIntersection=true')
-                            .then((res) => {
+                            if(this.locCoord.lat !== '') {
                                 this.cityContainer = []
-                                console.log(res.data.results[0].locations[0].adminArea6)
-                                console.log(res.data.results[0].locations[0].adminArea5)
-                                this.cityContainer.push(res.data.results[0].locations[0].adminArea6 + ' ( ' + res.data.results[0].locations[0].adminArea5 + ' ) ')
-                            })
-                            .catch((err) => {
-                                console.log(err.message)
-                                alert(err.message)
-                            })
+                                axios
+                                .get('http://www.mapquestapi.com/geocoding/v1/reverse?key=MBad3yJ2pJJATxnArTif6FYh8D2MPFJw&location=' + this.locCoord.lat + ','+ this.locCoord.long +'&includeRoadMetadata=true&includeNearestIntersection=true')
+                                .then((res) => {
+                                    console.log(res.data.results[0].locations[0].adminArea6)
+                                    console.log(res.data.results[0].locations[0].adminArea5)
+                                    this.cityContainer.push(res.data.results[0].locations[0].adminArea6 + ' ( ' + res.data.results[0].locations[0].adminArea5 + ' ) ')
+                                })
+                                .catch((err) => {
+                                    console.log(err.message)
+                                    alert(err.message)
+                                })
+                            }
                         }, 300)
 
                     }, (err) => {
