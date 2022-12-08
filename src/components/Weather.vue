@@ -160,18 +160,25 @@ import axios from 'axios'
         },
         methods: {
             getLocation() {
+                var loc = {
+                    lat: '',
+                    long: ''
+                }
                 if(navigator.geolocation) {
                     console.log('Geolocation is supported')
                     navigator.geolocation.getCurrentPosition((position) => {
                         this.locCoord.lat = position.coords.latitude.toFixed(2)
                         this.locCoord.long = position.coords.longitude.toFixed(2)
+                        loc.lat = position.coords.latitude
+                        loc.long = position.coords.longitude
+                        
 
                         this.getLatLong()
                         setTimeout(() => {
                             if(this.locCoord.lat !== '') {
                                 this.cityContainer = []
                                 axios
-                                .get('https://www.mapquestapi.com/geocoding/v1/reverse?key=MBad3yJ2pJJATxnArTif6FYh8D2MPFJw&location=' + this.locCoord.lat + ','+ this.locCoord.long +'&includeRoadMetadata=true&includeNearestIntersection=true')
+                                .get('https://www.mapquestapi.com/geocoding/v1/reverse?key=MBad3yJ2pJJATxnArTif6FYh8D2MPFJw&location=' + loc.lat + ','+ loc.long +'&includeRoadMetadata=true&includeNearestIntersection=true')
                                 .then((res) => {
                                     console.log(res.data.results[0].locations[0].adminArea6)
                                     console.log(res.data.results[0].locations[0].adminArea5)
