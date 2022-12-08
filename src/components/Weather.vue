@@ -143,9 +143,9 @@ import axios from 'axios'
                 alert(err.message)
             })
 
-            // setTimeout(() => {
-            //     this.getLocation()
-            // }, 100)
+            setTimeout(() => {
+                this.getLocation()
+            }, 100)
         
         },
         methods: {
