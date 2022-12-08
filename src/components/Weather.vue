@@ -82,6 +82,7 @@ import WeatherNextPrediction from './PredictionNextWeather.vue'
 import WeatherTodayPrediction from './PredictionTodaysWeather.vue'
 import axios from 'axios'
 
+
     export default {
         name: 'weather-container',
         components: {
@@ -144,7 +145,18 @@ import axios from 'axios'
         
         },
         updated() {
-            
+            // if(this.locCoord.lat !== '') {
+            //     axios
+            //         .get('http://www.mapquestapi.com/geocoding/v1/reverse?key=MBad3yJ2pJJATxnArTif6FYh8D2MPFJw&location=' + this.locCoord.lat + ','+ this.locCoord.long +'&includeRoadMetadata=true&includeNearestIntersection=true')
+            //         .then((res) => {
+            //             console.log(res.data.results[0].locations[0].adminArea6)
+            //             console.log(res.data.results[0].locations[0].adminArea5)
+            //         })
+            //         .catch((err) => {
+            //             console.log(err.message)
+            //             alert(err.message)
+            //         })
+            // }
         },
         methods: {
             getLocation() {
@@ -156,9 +168,20 @@ import axios from 'axios'
 
                         this.getLatLong()
                         setTimeout(() => {
-                            this.cityContainer = []
-                            this.cityContainer.push('Your Location ( ' + this.dataFetching.timezone + ' )')
+                            axios
+                            .get('http://www.mapquestapi.com/geocoding/v1/reverse?key=MBad3yJ2pJJATxnArTif6FYh8D2MPFJw&location=' + this.locCoord.lat + ','+ this.locCoord.long +'&includeRoadMetadata=true&includeNearestIntersection=true')
+                            .then((res) => {
+                                this.cityContainer = []
+                                console.log(res.data.results[0].locations[0].adminArea6)
+                                console.log(res.data.results[0].locations[0].adminArea5)
+                                this.cityContainer.push(res.data.results[0].locations[0].adminArea6 + ' ( ' + res.data.results[0].locations[0].adminArea5 + ' ) ')
+                            })
+                            .catch((err) => {
+                                console.log(err.message)
+                                alert(err.message)
+                            })
                         }, 300)
+
                     }, (err) => {
                         console.log(err.message)
                         alert(err.message)
