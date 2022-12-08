@@ -143,9 +143,9 @@ import axios from 'axios'
                 alert(err.message)
             })
 
-            setTimeout(() => {
-                this.getLocation()
-            }, 100)
+            // setTimeout(() => {
+            //     this.getLocation()
+            // }, 100)
         
         },
         methods: {
@@ -576,5 +576,35 @@ import axios from 'axios'
 
 .createdBy a:hover {
     color: #FFEC65;
+}
+
+@media screen and (max-width: 576px) {
+    .navigationContainer {
+        top: 29px;
+    }
+
+    .sBar .bgImage {
+        height: 812px;
+    }
+
+    .icon {
+        margin-top: 200px;
+    }
+
+    .icon {
+        margin-bottom: 40px;
+    }
+
+    .temperature {
+        margin-bottom: 23px;
+    }
+
+    .weather {
+        margin-bottom: 48px;
+    }
+
+    .predictionContainer {
+        padding: 42px 23px 25px;
+    }
 }
 </style>
