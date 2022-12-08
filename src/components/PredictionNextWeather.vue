@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="nContainer">
         <div class="iContainer d-flex justify-content-end">
             <button class="celcius" @click="$emit('changeToCel')">℃</button>
             <button class="fahrenheit" @click="$emit('changeToFah')">℉</button>
@@ -69,6 +69,10 @@
 </script>
 
 <style scoped>
+.nContainer {
+    padding-left: 0;
+}
+
 .iContainer {
     margin-bottom: 66px;
     gap: 12px;
@@ -137,5 +141,11 @@
     font-weight: 500;
     font-size: 16px;
     line-height: 18.78px;
+}
+
+@media screen and (max-width: 576px) {
+    .nContainer {
+        padding-left: 31px;
+    }
 }
 </style>
