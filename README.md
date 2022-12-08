@@ -35,7 +35,7 @@
 
 ## Overview
 
-![screenshot](https://user-images.githubusercontent.com/16707738/92399059-5716eb00-f132-11ea-8b14-bcacdc8ec97b.png)
+![screenshot](https://github.com/hasanaimroatun/wpu-weatherAppChallenge/blob/master/src/assets/2022-12-08.png)
 
 You can see my demo on . I have have interest in web development since a few months ago. I have learned css, html, javascript, react, boostrap, vue, and sass from youtube and few website. I hope with more learn and practice from devChallenges can improve my skill in developing website.
 
