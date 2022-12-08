@@ -14,7 +14,7 @@
                                 <i class="fa-solid fa-location-crosshairs"></i>
                             </button>
                             
-                            <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+                            <div class="offcanvas offcanvas-start offcanvas-size-sm" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
                                 <div class="offcanvas-header d-flex justify-content-end">
                                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                                 </div>
@@ -581,6 +581,14 @@ import axios from 'axios'
 @media screen and (max-width: 576px) {
     .navigationContainer {
         top: 29px;
+    }
+
+    .offcanvas-size-sm {
+        --bs-offcanvas-width: min(100vw, 100%) !important;
+    }
+
+    .nav-item button {
+        width: 100%;
     }
 
     .sBar .bgImage {
