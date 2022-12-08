@@ -14,7 +14,7 @@
                                 <i class="fa-solid fa-location-crosshairs"></i>
                             </button>
                             
-                            <div class="offcanvas offcanvas-start offcanvas-size-sm" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+                            <div class="offcanvas offcanvas-start offcanvas-size-sm offcanvas-size-md" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
                                 <div class="offcanvas-header d-flex justify-content-end">
                                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                                 </div>
@@ -442,6 +442,10 @@ import axios from 'axios'
     padding: 5px 25px;
 }
 
+.offcanvas-size-md { /* add Responsivenes to default offcanvas */
+    --bs-offcanvas-width: min(95vw, 446px) !important;
+}
+
 .offcanvas-body form {
     margin-bottom: 58px;
 }
@@ -477,7 +481,7 @@ import axios from 'axios'
     font-weight: 500;
     font-size: 16px;
     color: #E7E7EB;
-    width: 318px;
+    width: 362px;
     border: none;
     background: transparent;
     padding-left: 18px;
@@ -576,6 +580,16 @@ import axios from 'axios'
 
 .createdBy a:hover {
     color: #FFEC65;
+}
+
+@media screen and (max-width: 992px) {
+    .offcanvas-size-md { /* add Responsivenes to default offcanvas */
+        --bs-offcanvas-width: min(95vw, 400px) !important;
+    }
+
+    .nav-item button {
+        width: 318px;
+    }
 }
 
 @media screen and (max-width: 576px) {
